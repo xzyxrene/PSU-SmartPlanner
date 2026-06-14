@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# PSU SmartPlanner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+💻 **SWENG 411: Software Engineering**  
+👥 **Group 8:**  
+📌 **Project State:** Module 6 — Software Requirements  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Overview
+PSU SmartPlanner is a smart, component-driven scheduling web application engineered specifically for Penn State students. Moving beyond static university course viewers, this application aggregates academic workloads and system data into an optimized weekly planning layout.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🏗️ Architecture & UML Modeling
+For Module 6, our development transitions from conceptual design to strict software engineering implementation. We use UML modeling to map out system behavior and data relationships before writing core code.
 
-## Expanding the ESLint configuration
+### Included Visuals (See `/docs` or Wiki)
+* **UML Class Diagram**: Maps out our strongly-typed data structures and component properties.
+* **Component Architecture**: Details the data flow across our isolated frontend views.
+* **Sequence Diagrams**: Tracks user interactions from UI state shifts down to local data arrays.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Technical Stack
+* **Framework**: React (v18+)
+* **Build Tool**: Vite (Modern, high-performance alternative to CRA)
+* **Language**: TypeScript (Enforces strict compiler safety and robust interface typing)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📁 Branching & Team Collaboration
+To meet advanced software engineering standards, our team works in isolated feature streams. The `main` branch is protected and requires **1 peer code review and approval** via Pull Request before integration.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Active Workspace Distribution
+* `main-structure`: Core Structure and design
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## ⚡ Quick Start (Local Development)
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/xzyxrene/PSU-SmartPlanner
+   cd psu-smartplanner
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Launch Local Development Server:**
+   ```bash
+   npm run dev
+   ```

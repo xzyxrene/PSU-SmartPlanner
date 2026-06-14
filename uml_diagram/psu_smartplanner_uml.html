@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSU SmartPlanner — UML Class Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<style>
+  :root {
+    --navy: #1D2951;
+    --blue: #4993C9;
+    --light-blue: #E8F2FB;
+    --accent: #96BEE3;
+    --white: #FFFFFF;
+    --bg: #F3F6FA;
+    --border: #DDE4EE;
+    --text: #1A2234;
+    --muted: #8A99AE;
+    --green: #10B981;
+    --orange: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 40px 48px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 340px; height: 340px; border-radius: 50%;
+    background: rgba(73,147,201,0.12);
+  }
+  .header::after {
+    content: '';
+    position: absolute; bottom: -50px; left: 240px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(73,147,201,0.07);
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(73,147,201,0.2);
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 4px 12px;
+    border-radius: 4px; margin-bottom: 16px;
+    border: 1px solid rgba(73,147,201,0.3);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.8rem; font-weight: 700; line-height: 1.1;
+    margin-bottom: 10px; position: relative;
+  }
+  .header-sub { font-size: 1rem; opacity: 0.72; }
+  .header-pills {
+    margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; opacity: 0.8;
+  }
+  .pill-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue);
+  }
+
+  /* ── CONTENT ─────────────────────────────── */
+  .content { max-width: 1440px; margin: 0 auto; padding: 32px 24px 48px; }
+
+  /* ── STATS ROW ───────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    border-radius: 12px 12px 0 0;
+  }
+  .sc-blue::before   { background: var(--blue); }
+  .sc-navy::before   { background: var(--navy); }
+  .sc-green::before  { background: var(--green); }
+  .sc-orange::before { background: var(--orange); }
+  .stat-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--navy); line-height: 1; margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 0.72rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600;
+  }
+
+  /* ── LEGEND ──────────────────────────────── */
+  .legend-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 24px;
+    margin-bottom: 24px; display: flex;
+    align-items: center; flex-wrap: wrap; gap: 24px;
+  }
+  .legend-label {
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted); font-weight: 600;
+  }
+  .legend-items { display: flex; flex-wrap: wrap; gap: 24px; }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.82rem; color: #4A5568;
+  }
+
+  /* ── DIAGRAM CARD ────────────────────────── */
+  .diagram-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+    margin-bottom: 24px; overflow-x: auto;
+  }
+  .card-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-head h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem; color: var(--navy);
+  }
+  .code-tag {
+    background: var(--light-blue); color: var(--blue);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem; padding: 3px 10px;
+    border-radius: 4px; letter-spacing: 0.06em;
+  }
+  .mermaid { min-width: 980px; }
+
+  /* ── RELATIONS TABLE ─────────────────────── */
+  .table-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .table-card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem; color: var(--navy); margin-bottom: 18px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); font-weight: 600;
+    padding: 8px 14px; border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 14px; font-size: 0.82rem;
+    border-bottom: 1px solid var(--border); color: #4A5568;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFC; }
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78em; background: var(--bg);
+    padding: 2px 6px; border-radius: 3px; color: var(--navy);
+  }
+  .rbadge {
+    display: inline-block; padding: 2px 9px;
+    border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+  }
+  .rb-gen  { background: #FEF3C7; color: #B45309; }
+  .rb-comp { background: #DBEAFE; color: #1D4ED8; }
+  .rb-assoc{ background: #D1FAE5; color: #065F46; }
+
+  /* ── CLASS GRID ──────────────────────────── */
+  .grid-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+  }
+  .grid-card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem; color: var(--navy); margin-bottom: 18px;
+  }
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .cls {
+    border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .cls-head {
+    background: var(--navy); color: var(--white);
+    padding: 10px 14px;
+  }
+  .cls-head.abstract { background: #2D6A9F; }
+  .cls-name { font-size: 0.88rem; font-weight: 500; }
+  .cls-stereo {
+    font-size: 0.65rem; color: rgba(255,255,255,0.6);
+    font-style: italic; margin-bottom: 2px;
+  }
+  .cls-body { padding: 10px 14px; background: #FAFCFF; }
+  .sec-lbl {
+    font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted);
+    font-weight: 600; margin: 8px 0 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .sec-lbl:first-child { margin-top: 0; }
+  .attr, .mth {
+    font-size: 0.72rem; color: #3D4A5C;
+    padding: 1px 0; display: flex; gap: 4px;
+  }
+  .vis { font-weight: 700; }
+  .vis.pr { color: #DC2626; }
+  .vis.pu { color: #16A34A; }
+
+  footer {
+    text-align: center; padding: 24px;
+    font-size: 0.76rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<div class="header">
+  <div class="badge">Software Design · UML Class Model</div>
+  <h1>PSU SmartPlanner</h1>
+  <div class="header-sub">Automated Weekly Planner for Penn State Students — World Campus &amp; On-Campus</div>
+  <div class="header-pills">
+    <div class="pill"><span class="pill-dot"></span>15 Domain Classes</div>
+    <div class="pill"><span class="pill-dot"></span>4 Generalizations</div>
+    <div class="pill"><span class="pill-dot"></span>6 Compositions</div>
+    <div class="pill"><span class="pill-dot"></span>7 Associations</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card sc-blue">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Domain Classes</div>
+    </div>
+    <div class="stat-card sc-navy">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Generalizations</div>
+    </div>
+    <div class="stat-card sc-green">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Compositions</div>
+    </div>
+    <div class="stat-card sc-orange">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Associations</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend-card">
+    <span class="legend-label">UML Notation</span>
+    <div class="legend-items">
+      <div class="legend-item">
+        <svg width="56" height="18" viewBox="0 0 56 18">
+          <line x1="2" y1="9" x2="38" y2="9" stroke="#1D2951" stroke-width="2"/>
+          <polygon points="38,4 54,9 38,14" fill="none" stroke="#1D2951" stroke-width="2"/>
+        </svg>
+        <span><strong>Generalization</strong> (Inheritance)</span>
+      </div>
+      <div class="legend-item">
+        <svg width="56" height="18" viewBox="0 0 56 18">
+          <line x1="2" y1="9" x2="42" y2="9" stroke="#1D4ED8" stroke-width="2"/>
+          <polygon points="42,4 54,9 42,14" fill="#1D4ED8" stroke="#1D4ED8"/>
+          <polygon points="2,4 14,9 2,14" fill="#1D4ED8" stroke="#1D4ED8"/>
+        </svg>
+        <span><strong>Composition</strong></span>
+      </div>
+      <div class="legend-item">
+        <svg width="56" height="18" viewBox="0 0 56 18">
+          <line x1="2" y1="9" x2="42" y2="9" stroke="#065F46" stroke-width="2" stroke-dasharray="5,3"/>
+          <polygon points="42,4 54,9 42,14" fill="#065F46" stroke="#065F46"/>
+        </svg>
+        <span><strong>Directed Association</strong></span>
+      </div>
+      <div class="legend-item">
+        <svg width="56" height="18" viewBox="0 0 56 18">
+          <line x1="2" y1="9" x2="54" y2="9" stroke="#B45309" stroke-width="2"/>
+        </svg>
+        <span><strong>Association</strong> (undirected)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram-card">
+    <div class="card-head">
+      <h2>UML Class Diagram</h2>
+      <span class="code-tag">Mermaid · classDiagram</span>
+    </div>
+    <div class="mermaid">
+classDiagram
+    direction TB
+
+    class Student {
+        &lt;&lt;abstract&gt;&gt;
+        -studentId : String
+        -name : String
+        -email : String
+        -psuId : String
+        +login() void
+        +viewWeeklyPlan() WeeklyPlan
+        +addCourse(Course) void
+    }
+
+    class OnlineStudent {
+        -worldCampusId : String
+        -timezone : String
+        +accessOnlinePortal() void
+    }
+
+    class OfflineStudent {
+        -campusLocation : String
+        -buildingId : String
+        +viewCampusMap() void
+    }
+
+    class Course {
+        -courseId : String
+        -courseCode : String
+        -courseName : String
+        -credits : int
+        -instructor : String
+        +getCourseDetails() String
+        +getRequirements() List
+    }
+
+    class Enrollment {
+        -enrollmentId : String
+        -semester : String
+        -section : String
+        -enrollmentDate : Date
+        +getStatus() String
+    }
+
+    class CourseRequirement {
+        &lt;&lt;abstract&gt;&gt;
+        -requirementId : String
+        -title : String
+        -description : String
+        -weightPercentage : float
+        +getDeadline() Deadline
+        +getType() String
+    }
+
+    class Assignment {
+        -submissionLink : String
+        -maxPoints : int
+        -isGroupWork : boolean
+        +submit() void
+        +checkSubmission() boolean
+    }
+
+    class Exam {
+        -location : String
+        -duration : int
+        -isOnline : boolean
+        +getSeatingInfo() String
+    }
+
+    class Deadline {
+        -deadlineId : String
+        -dueDate : Date
+        -dueTime : String
+        -isExtended : boolean
+        +isOverdue() boolean
+        +getDaysRemaining() int
+    }
+
+    class WeeklyPlan {
+        -planId : String
+        -weekStartDate : Date
+        -weekEndDate : Date
+        -generatedDate : Date
+        +generatePlan() void
+        +printPlan() void
+        +exportToPDF() File
+    }
+
+    class WeeklyGoal {
+        -goalId : String
+        -description : String
+        -priority : int
+        -isCompleted : boolean
+        +markComplete() void
+        +getPriority() int
+    }
+
+    class TimeSlot {
+        -slotId : String
+        -day : String
+        -startTime : String
+        -endTime : String
+        -slotType : String
+        +getDuration() int
+        +isConflict(TimeSlot) boolean
+    }
+
+    class Notification {
+        -notificationId : String
+        -message : String
+        -sentDate : Date
+        -isRead : boolean
+        +markAsRead() void
+        +dismiss() void
+    }
+
+    class UniversityData {
+        -dataId : String
+        -source : String
+        -lastUpdated : Date
+        -semester : String
+        +fetchCourseData() List
+        +syncWithLionPath() void
+    }
+
+    class PSUSmartPlanner {
+        -version : String
+        -systemDate : Date
+        +generateWeeklyPlan(Student) WeeklyPlan
+        +sendNotifications() void
+        +importUniversityData() void
+    }
+
+    OnlineStudent --|> Student : extends
+    OfflineStudent --|> Student : extends
+    Assignment --|> CourseRequirement : extends
+    Exam --|> CourseRequirement : extends
+
+    Student "1" -- "0..*" Enrollment : participates in
+    Course "1" -- "0..*" Enrollment : listed in
+    Course "1" *-- "1..*" CourseRequirement : contains
+    CourseRequirement "1" --> "1" Deadline : has
+    Student "1" *-- "0..*" WeeklyPlan : owns
+    WeeklyPlan "1" *-- "1..*" WeeklyGoal : includes
+    WeeklyPlan "1" *-- "1..*" TimeSlot : schedules
+    TimeSlot "0..*" --> "0..1" CourseRequirement : allocated for
+    Student "1" --> "0..*" Notification : receives
+    Notification "0..*" --> "1" Deadline : alerts about
+    PSUSmartPlanner "1" --> "1" UniversityData : uses
+    PSUSmartPlanner "1" --> "0..*" WeeklyPlan : generates
+    UniversityData "1" --> "0..*" Course : provides
+    </div>
+  </div>
+
+  <!-- RELATIONSHIPS TABLE -->
+  <div class="table-card">
+    <h2>Relationship Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>From Class</th>
+          <th>To Class</th>
+          <th>Type</th>
+          <th>Multiplicity</th>
+          <th>Label / Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>OnlineStudent</code></td>
+          <td><code>Student</code></td>
+          <td><span class="rbadge rb-gen">Generalization</span></td>
+          <td>—</td>
+          <td>Online students are a specialized type of Student (World Campus)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>OfflineStudent</code></td>
+          <td><code>Student</code></td>
+          <td><span class="rbadge rb-gen">Generalization</span></td>
+          <td>—</td>
+          <td>On-campus students are a specialized type of Student</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>Assignment</code></td>
+          <td><code>CourseRequirement</code></td>
+          <td><span class="rbadge rb-gen">Generalization</span></td>
+          <td>—</td>
+          <td>Assignment is a specific kind of CourseRequirement</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>Exam</code></td>
+          <td><code>CourseRequirement</code></td>
+          <td><span class="rbadge rb-gen">Generalization</span></td>
+          <td>—</td>
+          <td>Exam is a specific kind of CourseRequirement</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>Student</code></td>
+          <td><code>Enrollment</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 0..*</td>
+          <td>A student participates in many enrollments</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>Course</code></td>
+          <td><code>Enrollment</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 0..*</td>
+          <td>A course is listed in many enrollments (many-to-many via Enrollment)</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><code>Course</code></td>
+          <td><code>CourseRequirement</code></td>
+          <td><span class="rbadge rb-comp">Composition</span></td>
+          <td>1 to 1..*</td>
+          <td>A course is composed of one or more requirements; requirements cannot exist without a course</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><code>CourseRequirement</code></td>
+          <td><code>Deadline</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 1</td>
+          <td>Every course requirement has exactly one deadline</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><code>Student</code></td>
+          <td><code>WeeklyPlan</code></td>
+          <td><span class="rbadge rb-comp">Composition</span></td>
+          <td>1 to 0..*</td>
+          <td>A student owns their weekly plans; plans belong to the student</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><code>WeeklyPlan</code></td>
+          <td><code>WeeklyGoal</code></td>
+          <td><span class="rbadge rb-comp">Composition</span></td>
+          <td>1 to 1..*</td>
+          <td>A weekly plan is composed of one or more goals</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><code>WeeklyPlan</code></td>
+          <td><code>TimeSlot</code></td>
+          <td><span class="rbadge rb-comp">Composition</span></td>
+          <td>1 to 1..*</td>
+          <td>A weekly plan schedules many time slots</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><code>TimeSlot</code></td>
+          <td><code>CourseRequirement</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>0..* to 0..1</td>
+          <td>A time slot may be allocated for a specific course requirement</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td><code>Student</code></td>
+          <td><code>Notification</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 0..*</td>
+          <td>A student receives zero or more notifications</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td><code>Notification</code></td>
+          <td><code>Deadline</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>0..* to 1</td>
+          <td>Notifications alert about a specific deadline</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td><code>PSUSmartPlanner</code></td>
+          <td><code>UniversityData</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 1</td>
+          <td>The planner system uses one university data source</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td><code>PSUSmartPlanner</code></td>
+          <td><code>WeeklyPlan</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 0..*</td>
+          <td>The system generates weekly plans</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td><code>UniversityData</code></td>
+          <td><code>Course</code></td>
+          <td><span class="rbadge rb-assoc">Association</span></td>
+          <td>1 to 0..*</td>
+          <td>University data provides the course catalog</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CLASS QUICK-REFERENCE GRID -->
+  <div class="grid-card">
+    <h2>Class Quick Reference</h2>
+    <div class="class-grid">
+
+      <!-- Student (abstract) -->
+      <div class="cls">
+        <div class="cls-head abstract">
+          <div class="cls-stereo">&lt;&lt;abstract&gt;&gt;</div>
+          <div class="cls-name">Student</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> studentId : String</div>
+          <div class="attr"><span class="vis pr">−</span> name : String</div>
+          <div class="attr"><span class="vis pr">−</span> email : String</div>
+          <div class="attr"><span class="vis pr">−</span> psuId : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> login() void</div>
+          <div class="mth"><span class="vis pu">+</span> viewWeeklyPlan() WeeklyPlan</div>
+          <div class="mth"><span class="vis pu">+</span> addCourse(Course) void</div>
+        </div>
+      </div>
+
+      <!-- OnlineStudent -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">OnlineStudent</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> worldCampusId : String</div>
+          <div class="attr"><span class="vis pr">−</span> timezone : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> accessOnlinePortal() void</div>
+        </div>
+      </div>
+
+      <!-- OfflineStudent -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">OfflineStudent</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> campusLocation : String</div>
+          <div class="attr"><span class="vis pr">−</span> buildingId : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> viewCampusMap() void</div>
+        </div>
+      </div>
+
+      <!-- Course -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Course</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> courseId : String</div>
+          <div class="attr"><span class="vis pr">−</span> courseCode : String</div>
+          <div class="attr"><span class="vis pr">−</span> courseName : String</div>
+          <div class="attr"><span class="vis pr">−</span> credits : int</div>
+          <div class="attr"><span class="vis pr">−</span> instructor : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> getCourseDetails() String</div>
+          <div class="mth"><span class="vis pu">+</span> getRequirements() List</div>
+        </div>
+      </div>
+
+      <!-- Enrollment -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Enrollment</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> enrollmentId : String</div>
+          <div class="attr"><span class="vis pr">−</span> semester : String</div>
+          <div class="attr"><span class="vis pr">−</span> section : String</div>
+          <div class="attr"><span class="vis pr">−</span> enrollmentDate : Date</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> getStatus() String</div>
+        </div>
+      </div>
+
+      <!-- CourseRequirement (abstract) -->
+      <div class="cls">
+        <div class="cls-head abstract">
+          <div class="cls-stereo">&lt;&lt;abstract&gt;&gt;</div>
+          <div class="cls-name">CourseRequirement</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> requirementId : String</div>
+          <div class="attr"><span class="vis pr">−</span> title : String</div>
+          <div class="attr"><span class="vis pr">−</span> description : String</div>
+          <div class="attr"><span class="vis pr">−</span> weightPercentage : float</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> getDeadline() Deadline</div>
+          <div class="mth"><span class="vis pu">+</span> getType() String</div>
+        </div>
+      </div>
+
+      <!-- Assignment -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Assignment</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> submissionLink : String</div>
+          <div class="attr"><span class="vis pr">−</span> maxPoints : int</div>
+          <div class="attr"><span class="vis pr">−</span> isGroupWork : boolean</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> submit() void</div>
+          <div class="mth"><span class="vis pu">+</span> checkSubmission() boolean</div>
+        </div>
+      </div>
+
+      <!-- Exam -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Exam</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> location : String</div>
+          <div class="attr"><span class="vis pr">−</span> duration : int</div>
+          <div class="attr"><span class="vis pr">−</span> isOnline : boolean</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> getSeatingInfo() String</div>
+        </div>
+      </div>
+
+      <!-- Deadline -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Deadline</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> deadlineId : String</div>
+          <div class="attr"><span class="vis pr">−</span> dueDate : Date</div>
+          <div class="attr"><span class="vis pr">−</span> dueTime : String</div>
+          <div class="attr"><span class="vis pr">−</span> isExtended : boolean</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> isOverdue() boolean</div>
+          <div class="mth"><span class="vis pu">+</span> getDaysRemaining() int</div>
+        </div>
+      </div>
+
+      <!-- WeeklyPlan -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">WeeklyPlan</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> planId : String</div>
+          <div class="attr"><span class="vis pr">−</span> weekStartDate : Date</div>
+          <div class="attr"><span class="vis pr">−</span> weekEndDate : Date</div>
+          <div class="attr"><span class="vis pr">−</span> generatedDate : Date</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> generatePlan() void</div>
+          <div class="mth"><span class="vis pu">+</span> printPlan() void</div>
+          <div class="mth"><span class="vis pu">+</span> exportToPDF() File</div>
+        </div>
+      </div>
+
+      <!-- WeeklyGoal -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">WeeklyGoal</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> goalId : String</div>
+          <div class="attr"><span class="vis pr">−</span> description : String</div>
+          <div class="attr"><span class="vis pr">−</span> priority : int</div>
+          <div class="attr"><span class="vis pr">−</span> isCompleted : boolean</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> markComplete() void</div>
+          <div class="mth"><span class="vis pu">+</span> getPriority() int</div>
+        </div>
+      </div>
+
+      <!-- TimeSlot -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">TimeSlot</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> slotId : String</div>
+          <div class="attr"><span class="vis pr">−</span> day : String</div>
+          <div class="attr"><span class="vis pr">−</span> startTime : String</div>
+          <div class="attr"><span class="vis pr">−</span> endTime : String</div>
+          <div class="attr"><span class="vis pr">−</span> slotType : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> getDuration() int</div>
+          <div class="mth"><span class="vis pu">+</span> isConflict(TimeSlot) boolean</div>
+        </div>
+      </div>
+
+      <!-- Notification -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">Notification</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> notificationId : String</div>
+          <div class="attr"><span class="vis pr">−</span> message : String</div>
+          <div class="attr"><span class="vis pr">−</span> sentDate : Date</div>
+          <div class="attr"><span class="vis pr">−</span> isRead : boolean</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> markAsRead() void</div>
+          <div class="mth"><span class="vis pu">+</span> dismiss() void</div>
+        </div>
+      </div>
+
+      <!-- UniversityData -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">UniversityData</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> dataId : String</div>
+          <div class="attr"><span class="vis pr">−</span> source : String</div>
+          <div class="attr"><span class="vis pr">−</span> lastUpdated : Date</div>
+          <div class="attr"><span class="vis pr">−</span> semester : String</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> fetchCourseData() List</div>
+          <div class="mth"><span class="vis pu">+</span> syncWithLionPath() void</div>
+        </div>
+      </div>
+
+      <!-- PSUSmartPlanner -->
+      <div class="cls">
+        <div class="cls-head">
+          <div class="cls-name">PSUSmartPlanner</div>
+        </div>
+        <div class="cls-body">
+          <div class="sec-lbl">Attributes</div>
+          <div class="attr"><span class="vis pr">−</span> version : String</div>
+          <div class="attr"><span class="vis pr">−</span> systemDate : Date</div>
+          <div class="sec-lbl">Methods</div>
+          <div class="mth"><span class="vis pu">+</span> generateWeeklyPlan(Student) WeeklyPlan</div>
+          <div class="mth"><span class="vis pu">+</span> sendNotifications() void</div>
+          <div class="mth"><span class="vis pu">+</span> importUniversityData() void</div>
+        </div>
+      </div>
+
+    </div><!-- /class-grid -->
+  </div><!-- /grid-card -->
+
+</div><!-- /content -->
+
+<footer>PSU SmartPlanner · UML Class Diagram · Software Design Deliverable</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    themeVariables: {
+      primaryColor: '#1D2951',
+      primaryTextColor: '#ffffff',
+      primaryBorderColor: '#4993C9',
+      lineColor: '#4993C9',
+      secondaryColor: '#E8F2FB',
+      tertiaryColor: '#f4f6f9',
+      fontFamily: 'IBM Plex Mono, monospace',
+      fontSize: '14px'
+    }
+  });
+</script>
+</body>
+</html>
